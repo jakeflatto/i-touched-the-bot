@@ -32,8 +32,13 @@ client.on('message', msg => {
   if (msg.content.startsWith('!costanza')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616480004267704350/1300044776986_1.jpg')
   }  
+
   if (msg.content.startsWith('!crycat') || msg.content.startsWith('!syadcat')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616480111000158228/image0-25.jpg')
+  }
+
+  if (msg.content.startsWith('!adny')) {
+  	msg.channel.send('https://cdn.discordapp.com/attachments/614693287567163397/616480211160268830/andyyoda.png')
   }
 })
 
