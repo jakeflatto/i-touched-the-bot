@@ -40,6 +40,11 @@ client.on('message', msg => {
   if (msg.content.startsWith('!adny')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/614693287567163397/616480211160268830/andyyoda.png')
   }
+
+  if (msg.content.startsWith('!knifecat')) {
+  	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616483873412612099/image0.jpg')
+  }  
+
 })
 
 
