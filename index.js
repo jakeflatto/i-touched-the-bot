@@ -67,6 +67,34 @@ client.on('message', msg => {
   	fetch('https://api.imgflip.com/caption_image',method).then(res => res.json()).then(json => msg.channel.send(json.data.url))
   }
 
+  if (msg.content.startsWith('!newsflash')) {
+  	command_list = msg.content.split(' ');
+  	action = command_list[1].split('-').join(' ');
+  	params = new URLSearchParams();
+  	params.append('template_id','142106290');
+  	params.append('username',process.env.IMGFLIP_USERNAME);
+  	params.append('password',process.env.IMGFLIP_PASSWORD);
+  	params.append('text0','newsflash assholes');
+  	params.append('text1',`I\'ve been ${action} the whole time`);
+  	console.log(params)
+  	method = {method:'POST',body:params};
+  	fetch('https://api.imgflip.com/caption_image',method).then(res => res.json()).then(json => msg.channel.send(json.data.url))
+  }
+
+  if (msg.content.startsWith('!assflash')) {
+  	command_list = msg.content.split(' ');
+  	action = command_list[1].split('-').join(' ');
+  	params = new URLSearchParams();
+  	params.append('template_id','142106290');
+  	params.append('username',process.env.IMGFLIP_USERNAME);
+  	params.append('password',process.env.IMGFLIP_PASSWORD);
+  	params.append('text0','assflash newsholes');
+  	params.append('text1',`I\'ve been ${action} the whole time`);
+  	console.log(params)
+  	method = {method:'POST',body:params};
+  	fetch('https://api.imgflip.com/caption_image',method).then(res => res.json()).then(json => msg.channel.send(json.data.url))
+  }
+
 })
 
 
