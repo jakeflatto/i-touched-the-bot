@@ -40,6 +40,10 @@ client.on('message', msg => {
     msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png')
   }
 
+  if (msg.content.startsWith('!kermit')) {
+  	msg.channel.send('https://media0.giphy.com/media/fMwU9EKsJsxmU/source.gif')
+  }
+
   if (msg.content.startsWith('!knifecat')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616483873412612099/image0.jpg')
   }  
