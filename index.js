@@ -3,6 +3,8 @@ require('dotenv').config()
 const Discord = require('discord.js')
 const client = new Discord.Client()
 
+const fetch = require('node-fetch')
+const { URLSearchParams } = require('url')
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
@@ -44,6 +46,21 @@ client.on('message', msg => {
 
   if (msg.content.startsWith('!poe')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616480057250283521/1c3.jpg')
+  }
+
+  if (msg.content.startsWith('!exit')) {
+  	command_list = msg.content.split(' ');
+  	highway_text = command_list[1].split('-').join(' ');
+  	exit_text = command_list[2].split('-').join(' ');
+  	params = new URLSearchParams();
+  	params.append('template_id','124822590');
+  	params.append('username',process.env.IMGFLIP_USERNAME);
+  	params.append('password',process.env.IMGFLIP_PASSWORD);
+  	params.append('text0',highway_text);
+  	params.append('text1',exit_text);
+  	console.log(params)
+  	method = {method:'POST',body:params};
+  	fetch('https://api.imgflip.com/caption_image',method).then(res => res.json()).then(json => msg.channel.send(json.data.url))
   }
 
 })
