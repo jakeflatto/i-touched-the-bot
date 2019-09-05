@@ -43,6 +43,10 @@ client.on('message', msg => {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616480004267704350/1300044776986_1.jpg')
   }
 
+  if (msg.content.startsWith('!crabthread')) {
+  	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/618668121611304970/image0.png')
+  }  
+
   if (msg.content.startsWith('!crycat') || msg.content.startsWith('!syadcat')) {
   	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/616480111000158228/image0-25.jpg')
   }
