@@ -23,21 +23,47 @@ client.on('message', msg => {
 	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png')
 	}
 
-	if (!msg.content.startsWith(config.prefix) || msg.author.bot) return;
+	if (!msg.content.startsWith(config.prefix)) return;
 
 	const args = msg.content.slice(config.prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
+	const commandName = args.shift().toLowerCase();
 
-	if (!client.commands.has(command)) {
+	if (!client.commands.has(commandName)) {
 		// msg.reply(`Sorry, no command found for: "${config.prefix + command}" ...`);
 		return;
 	}
 
+	const command = client.commands.get(commandName);
+
+	if (command.args && (!args.length || args.length < command.numArgs)) {
+		let reply = `You didn't provide enough arguments for the command: "${config.prefix}${commandName}"`
+		msg.reply(reply)
+
+		let moreInfo = ``;
+	
+		if (command.usage) {
+			moreInfo += `The proper usage would be: ${config.prefix}${commandName} ${command.usage}`;
+		
+			if (command.example) {
+				moreInfo += `\nFor example:`;
+				msg.channel.send(moreInfo);
+				return msg.channel.send(command.example);
+			}
+			
+			if (!moreInfo=='') {
+				return msg.channel.send(moreInfo);			
+			}
+		}
+	
+		return;
+	}
+
 	try {
-		client.commands.get(command).execute(msg,args);
+		command.execute(msg,args);
+
 	} catch (error) {
 		console.error(error);
-		msg.reply(`There was an error trying to execute the command: "${config.prefix + command}" ...`)
+		msg.reply(`There was an error trying to execute the command: "${config.prefix + commandName}"`)
 	}
 })
 

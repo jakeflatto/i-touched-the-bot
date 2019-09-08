@@ -3,19 +3,13 @@ const imgflip = require('./../imgflip.js');
 module.exports = {
 	name: 'exit',
 	description: `Generates a "screeching exit off highway" meme.`,
+	args: true,
+	numArgs: 2,
+	usage: '<Highway Text> <Exit Text>',
+	example: '!exit any-other-race tieflings',
 	execute(msg, args) {
-		if (!args.length) {
-			msg.reply(`You haven't provided any meme text! Please provide highway text and exit text.`);
-			return;
-		}
-
-		if (args.length == 1) {
-			msg.reply('You have only provided one piece of meme text! Please provide both highway text and exit text.')
-			return;
-		}
-
-		highwayText = args[0];
-		exitText = args[1];
+		highwayText = args[0].split('-').join(' ');
+		exitText = args[1].split('-').join(' ');
 
 	  	imgflip.generateMemeById(msg,'124822590',highwayText,exitText);	
 	}
