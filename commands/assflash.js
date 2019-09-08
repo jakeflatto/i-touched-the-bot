@@ -2,7 +2,7 @@ const imgflip = require('./../imgflip.js');
 
 module.exports = {
 	name: 'assflash',
-	description: 'Generates an "assflash newsholes" meme.',
+	description: `Generates an "assflash newsholes" meme.`,
 	execute(msg, args) {
 		if (!args.length) {
 			msg.reply(`You haven't provided any meme text! Please provide meme text.`);
