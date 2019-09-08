@@ -18,20 +18,46 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
-	if (!msg.author.bot && (!msg.content.startsWith('!hubert') && msg.content.toLowerCase().includes('hubert') || msg.content.toLowerCase().includes('he\'s a vish') || msg.content.toLowerCase().includes('hes a vish'))) {
+	if (msg.author.lastMessage.mentions._guild == null) {
+		console.log(`This is a DM.`)
+	} else {
+		console.log(`This message was sent in the server: ${msg.author.lastMessage.mentions._guild.name}`)		
+	}
+
+	//special case for any mentions of "hubert" or "vish"
+	//ignore if it's a bot message
+	if (!msg.author.bot 
+		//ignore if someone used hubert command
+		&& !msg.content.startsWith('!hubert') 
+			//proc if someone uses any of the following phrases
+			&& (msg.content.toLowerCase().includes('hubert') 
+			|| msg.content.toLowerCase().includes('he\'s a vish') 
+			|| msg.content.toLowerCase().includes('hes a vish'))) {
 	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png');
 	}
 
+	//at this point, check for commands only by checking prefix
 	if (!msg.content.startsWith(config.prefix)) return;
 
+	//parse command and args
 	const args = msg.content.slice(config.prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
+	//find command or alias
 	const command = client.commands.get(commandName) 
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
+	//if no command exists, do nothing
 	if (!command) return;
 
+	//if command specifies allowed guilds, and we are in a guild, check if command is allowed in guild
+	if(command.guilds && !msg.author.lastMessage.mentions._guild == null) {
+		if (!command.guilds.includes(msg.author.lastMessage.mentions._guild.name)) {
+			return;
+		}
+	}
+
+	//validate number of arguments provided
 	if (command.args && (!args.length || args.length < command.numArgs)) {
 		let reply = `You didn't provide enough arguments for the command: "${config.prefix}${commandName}"`
 		msg.reply(reply)
