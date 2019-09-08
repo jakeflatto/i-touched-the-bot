@@ -1,15 +1,22 @@
 const { prefix } = require('../config.json');
 
+
+//list all commands in a guild
 function generalHelp(msg,commands,guild) {
 	data = []
+
+	//if the command was sent directly to the bot, list all commands
 	if (guild == 'DM') {
 		data.push('Here\'s a list of all my commands:');
 		data.push(commands.map(command => command.name).join(', '));
+	//otherwise, restrict the list to the commands in the guild help was asked in
 	} else {
 		data.push(`Here\'s a list of all my commands in the server **${guild}**:`);
 		data.push(commandsInGuild(commands,guild));
 
 	}
+
+
 	data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
 
 	return msg.author.send(data, { split: true })
@@ -30,9 +37,9 @@ function commandHelp(msg,command) {
 
 	if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
 	if (command.description) data.push(`**Description:** ${command.description}`);
-	if (command.guilds) data.push(`**Servers Allowed In:** ${command.guilds.join(', ')}`)
-	if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-	if (command.example) data.push(`**Example:** ${prefix}${command.name} ${command.example}`);
+	if (command.guilds) data.push(`**Servers Recognized In:** ${command.guilds.join(', ')}`)
+	if (command.usage) data.push(`**Usage:** \`${prefix}${command.name} ${command.usage}\``);
+	if (command.example) data.push(`**Example:** \`${prefix}${command.name} ${command.example}\``);
 
 	data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
 
@@ -66,7 +73,7 @@ module.exports = {
 			guild = msg.author.lastMessage.mentions._guild.name
 		}
 
-		//if no command was entered, list all commands in guild
+		//if no command was entered, use general help to list all commands in guild
 		if (!args.length) {
 			return generalHelp(msg,commands,guild);
 		}

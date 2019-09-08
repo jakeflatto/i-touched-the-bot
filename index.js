@@ -60,12 +60,12 @@ client.on('message', msg => {
 		let moreInfo = ``;
 	
 		if (command.usage) {
-			moreInfo += `The proper usage would be: ${config.prefix}${commandName} ${command.usage}`;
+			moreInfo += `The proper usage would be: \`${config.prefix}${commandName} ${command.usage}\``;
 		
 			if (command.example) {
 				moreInfo += `\nFor example:`;
 				msg.channel.send(moreInfo);
-				return msg.channel.send(command.example);
+				return msg.channel.send(`\`${command.example}\``);
 			}
 			
 			if (!moreInfo=='') {
