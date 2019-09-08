@@ -28,12 +28,10 @@ client.on('message', msg => {
 	const args = msg.content.slice(config.prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	if (!client.commands.has(commandName)) {
-		// msg.reply(`Sorry, no command found for: "${config.prefix + command}" ...`);
-		return;
-	}
+	const command = client.commands.get(commandName) 
+		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-	const command = client.commands.get(commandName);
+	if (!command) return;
 
 	if (command.args && (!args.length || args.length < command.numArgs)) {
 		let reply = `You didn't provide enough arguments for the command: "${config.prefix}${commandName}"`

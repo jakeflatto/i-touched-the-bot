@@ -1,5 +1,6 @@
 module.exports = {
 	name: 'crycat',
+	aliases: ['syadcat','sadcat'],
 	description: `Sends crying cat image.`,
 	args: false,
 	execute(msg, args) {
