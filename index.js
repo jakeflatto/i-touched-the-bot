@@ -18,6 +18,11 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
+
+	if (msg.content.toLowerCase().includes('hubert') || msg.content.toLowerCase().includes('he\'s a vish') || msg.content.toLowerCase().includes('hes a vish')) {
+	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png')
+	}
+
 	if (!msg.content.startsWith(config.prefix) || msg.author.bot) return;
 
 	const args = msg.content.slice(config.prefix.length).split(/ +/);
@@ -35,14 +40,6 @@ client.on('message', msg => {
 		msg.reply(`There was an error trying to execute the command: "${config.prefix + command}" ...`)
 	}
 })
-
-// client.on('message', msg => {
-
-//   if (msg.content.toLowerCase().includes('hubert') || msg.content.toLowerCase().includes('he\'s a vish') || msg.content.toLowerCase().includes('hes a vish')) {
-//     msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png')
-//   }
-// })
-
 
 
 client.login(process.env[config.botToken]) 
