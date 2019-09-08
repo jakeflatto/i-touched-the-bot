@@ -19,7 +19,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
 
-	if (msg.content.toLowerCase().includes('hubert') || msg.content.toLowerCase().includes('he\'s a vish') || msg.content.toLowerCase().includes('hes a vish')) {
+	if (!msg.author.bot && (msg.content.toLowerCase().includes('hubert') || msg.content.toLowerCase().includes('he\'s a vish') || msg.content.toLowerCase().includes('hes a vish'))) {
 	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png')
 	}
 
