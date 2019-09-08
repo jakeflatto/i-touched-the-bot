@@ -1,25 +1,11 @@
 require('dotenv').config()
 
-const Discord = require('discord.js')
-const client = new Discord.Client()
+const config = require('./config.json');
 
-const fetch = require('node-fetch')
-const { URLSearchParams } = require('url')
+const Discord = require('discord.js');
+const client = new Discord.Client();
 
-const username = process.env.IMGFLIP_USERNAME
-const password = process.env.IMGFLIP_PASSWORD
-
-imgflip = function(msg,template_id,text0,text1) {
-	params = new URLSearchParams();
-  	params.append('template_id',template_id);
-  	params.append('username',username);
-  	params.append('password',password);
-  	params.append('text0',text0);
-  	params.append('text1',text1);
-  	console.log(params)
-  	method = {method:'POST',body:params};
-  	fetch('https://api.imgflip.com/caption_image',method).then(res => res.json()).then(json => msg.channel.send(json.data.url))
-}
+const imgflip = require('./imgflip.js');
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
@@ -75,29 +61,29 @@ client.on('message', msg => {
   	command_list = msg.content.split(' ');
   	highway_text = command_list[1].split('-').join(' ');
   	exit_text = command_list[2].split('-').join(' ');
-  	imgflip(msg,'124822590',highway_text,exit_text);
+  	imgflip.generateMemeById(msg,'124822590',highway_text,exit_text);
   }
 
   if (msg.content.startsWith('!newsflash')) {
   	command_list = msg.content.split(' ');
   	action = command_list[1].split('-').join(' ');
-  	imgflip(msg,'142106290','newsflash assholes',`I\'ve been ${action} the whole time`);
+  	imgflip.generateMemeById(msg,'142106290','newsflash assholes',`I\'ve been ${action} the whole time`);
   }
 
   if (msg.content.startsWith('!assflash')) {
   	command_list = msg.content.split(' ');
   	action = command_list[1].split('-').join(' ');
-  	imgflip(msg,'142106290','assflash newsholes',`I\'ve been ${action} the whole time`);
+  	imgflip.generateMemeById(msg,'142106290','assflash newsholes',`I\'ve been ${action} the whole time`);
   }
 
   if (msg.content.startsWith('!wait')) {
   	command_list = msg.content.split(' ');
   	action = command_list[1].split('-').join(' ');
-  	imgflip(msg,'177682295','',`Wait, you guys are getting ${action}?`);  	
+  	imgflip.generateMemeById(msg,'177682295','',`Wait, you guys are getting ${action}?`);  	
   }
 
 })
 
 
 
-client.login(process.env.BOT_TOKEN) 
+client.login(process.env[config.botToken]) 
