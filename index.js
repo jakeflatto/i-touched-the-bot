@@ -18,11 +18,6 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
-	if (msg.author.lastMessage.mentions._guild == null) {
-		console.log(`This is a DM.`)
-	} else {
-		console.log(`This message was sent in the server: ${msg.author.lastMessage.mentions._guild.name}`)		
-	}
 
 	//special case for any mentions of "hubert" or "vish"
 	//ignore if it's a bot message
