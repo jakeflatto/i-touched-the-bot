@@ -13,12 +13,16 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
+
+
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 })
 
 client.on('message', msg => {
-
+	
+	const botGuildsList = client.guilds.map(guild => guild.name);
+	
 	//special case for any mentions of "hubert" or "vish"
 	//ignore if it's a bot message
 	if (!msg.author.bot 
@@ -77,7 +81,7 @@ client.on('message', msg => {
 	}
 
 	try {
-		command.execute(msg,args);
+		command.execute(msg,args,botGuildsList);
 
 	} catch (error) {
 		console.error(error);
@@ -86,4 +90,4 @@ client.on('message', msg => {
 })
 
 
-client.login(process.env[config.botToken]) 
+client.login(process.env[config.botToken])

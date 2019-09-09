@@ -30,18 +30,17 @@ function generalHelp(msg,commands,guild) {
 		});		
 }
 
-function commandHelp(msg,command) {
+function commandHelp(msg,command,botGuildsList) {
 	data = []
 
-	data.push(`**Command:** ${command.name}`);
+	data.push(`**Command:**\n\t${command.name}`);
 
-	if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-	if (command.description) data.push(`**Description:** ${command.description}`);
-	if (command.guilds) data.push(`**Servers Recognized In:** ${command.guilds.join(', ')}`)
-	if (command.usage) data.push(`**Usage:** \`${prefix}${command.name} ${command.usage}\``);
-	if (command.example) data.push(`**Example:** \`${prefix}${command.name} ${command.example}\``);
-
-	data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+	if (command.aliases) data.push(`**Aliases:**\n\t${command.aliases.join('\n\t')}`);
+	if (command.description) data.push(`**Description:**\n\t${command.description}`);
+	if (command.guilds) data.push(`**Servers Recognized In:**\n\t${command.guilds.join('\n\t')}`);
+	if (!command.guilds) data.push(`**Servers Recognized In:**\n\t${botGuildsList.join('\n\t')}`);
+	if (command.usage) data.push(`**Usage:**\n\t\`${prefix}${command.name} ${command.usage}\``);
+	if (command.example) data.push(`**Example:**\n\t\`${prefix}${command.name} ${command.example}\``);
 
 	msg.channel.send(data, { split: true });		
 }
@@ -61,7 +60,7 @@ module.exports = {
 	description: 'List all of my commands or info about a specific command.',
 	aliases: ['commands'],
 	usage: '[command name]',
-	execute(msg, args) {
+	execute(msg, args,botGuildsList) {
 		const data = [];
 		const { commands } = msg.client;
 		let guild = ''
@@ -91,6 +90,6 @@ module.exports = {
 			return msg.reply('that\'s not a valid command in this server!');
 		}
 
-		return commandHelp(msg,command);
+		return commandHelp(msg,command,botGuildsList);
 	}
 };
