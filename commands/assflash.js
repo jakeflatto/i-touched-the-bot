@@ -5,8 +5,8 @@ module.exports = {
 	description: `Generates an "assflash newsholes" meme.`,
 	args: true,
 	numArgs: 1,
-	usage: '<Text>',
-	example: '!assflash a-sexy-ghost',
+	usage: '[Text]',
+	example: 'a-sexy-ghost',
 	execute(msg, args) {
 		action = args[0].split('-').join(' ');
 

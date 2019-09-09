@@ -5,8 +5,8 @@ module.exports = {
 	description: `Generates a "wait, you guys are getting ___" meme.`,
 	args: true,
 	numArgs: 1,
-	usage: '<Text>',
-	example: '!wait avocado-toast',
+	usage: '[Text]',
+	example: 'avocado-toast',
 	execute(msg, args) {
 		action = args[0].split('-').join(' ');
 

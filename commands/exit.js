@@ -5,8 +5,8 @@ module.exports = {
 	description: `Generates a "screeching exit off highway" meme.`,
 	args: true,
 	numArgs: 2,
-	usage: '<Highway Text> <Exit Text>',
-	example: '!exit any-other-race tieflings',
+	usage: '[Highway Text] [Exit Text]',
+	example: 'any-other-race tieflings',
 	execute(msg, args) {
 		highwayText = args[0].split('-').join(' ');
 		exitText = args[1].split('-').join(' ');
