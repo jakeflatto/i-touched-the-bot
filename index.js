@@ -20,7 +20,7 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
-	
+
 	const botGuildsList = client.guilds.map(guild => guild.name);
 	
 	//special case for any mentions of "hubert" or "vish"
