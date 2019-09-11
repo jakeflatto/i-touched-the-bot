@@ -69,7 +69,7 @@ client.on('message', msg => {
 			if (command.example) {
 				moreInfo += `\nFor example:`;
 				msg.channel.send(moreInfo);
-				return msg.channel.send(`\`${command.example}\``);
+				return msg.channel.send(`\`${config.prefix}${commandName} ${command.example}\``);
 			}
 			
 			if (!moreInfo=='') {

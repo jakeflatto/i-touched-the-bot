@@ -50,6 +50,7 @@ function commandsInGuild(commands, guild) {
 		.filter(command => command.guilds)
 		.filter(command => command.guilds.includes(guild))
 		.concat(commands.filter(command => !command.guilds))
+		.filter(command => command.name !== 'quickimg')
 		.map(command => command.name)
 		.sort()
 		.join(', ');

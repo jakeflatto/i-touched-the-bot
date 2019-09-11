@@ -1,4 +1,4 @@
-const imgflip = require('./../imgflip.js');
+const imgflip = require('../imgflip.js');
 
 module.exports = {
 	name: 'exit',
