@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const config = require('./config.json');
 const Discord = require('discord.js');
+const quickImages = require('./dynamoQuickImages.js');
 const fs = require('fs');
 
 const client = new Discord.Client();
@@ -19,10 +20,12 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.on('message', msg => {
+client.on('message', async msg => {
 
 	const botGuildsList = client.guilds.map(guild => guild.name);
 	
+	if (msg.author.bot) return;
+
 	//special case for any mentions of "hubert" or "vish"
 	//ignore if it's a bot message
 	if (!msg.author.bot 
@@ -39,18 +42,25 @@ client.on('message', msg => {
 	if (!msg.content.startsWith(config.prefix)) return;
 
 	//parse command and args
-	const args = msg.content.slice(config.prefix.length).split(/ +/);
+	const args = msg.content.slice(config.prefix.length).split(/\s+/);
 	const commandName = args.shift().toLowerCase();
 
 	//find command or alias
 	const command = client.commands.get(commandName) 
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
+	if (!command) {
+		var images = await quickImages.getImages();
+		if (images.map(img => img.name).includes(commandName)) {
+			return msg.channel.send(images.filter(img => img.name == commandName).map(img => img.url)[0])
+		}
+	}
+
 	//if no command exists, do nothing
 	if (!command) return;
 
 	//if command specifies allowed guilds, and we are in a guild, check if command is allowed in guild
-	if(command.guilds && !msg.author.lastMessage.mentions._guild == null) {
+	if(command.guilds && !(msg.author.lastMessage.mentions._guild == null)) {
 		if (!command.guilds.includes(msg.author.lastMessage.mentions._guild.name)) {
 			return;
 		}
@@ -85,7 +95,7 @@ client.on('message', msg => {
 
 	} catch (error) {
 		console.error(error);
-		msg.reply(`There was an error trying to execute the command: "${config.prefix + commandName}"`)
+		msg.reply(`There was an error trying to execute the command: "${config.prefix}${commandName}"`)
 	}
 })
 

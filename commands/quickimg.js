@@ -1,16 +1,18 @@
 const { prefix } = require('../config.json')
 
-const imgMap = require('../imgmap.json')
+const dynamo = require('../dynamo.js')
 
 module.exports = {
 	name: 'quickimg',
-	aliases: function () {return imgMap.images.map(img => img.name)}(),
 	description: `Sends the image mapped in the quickimg reference json file.`,
 	guilds: ['jakes-playground','jakes-playground-dev'],
 	args: false,
 	execute(msg, args) {
-		console.log(imgMap.images.filter(img => img.name == msg.content.slice(prefix.length)).map(img => img.url));
-		msg.channel.send(imgMap.images.filter(img => img.name == msg.content.slice(prefix.length)).map(img => img.url));
+		var params = {TableName: 'i-touched-the-bot-quick-images', Key: {name: msg.content.slice(prefix.length)}};
+		dynamo.get(params, function(err, data) {
+			if (err) console.log(err, err.stack); // an error occurred
+			else msg.channel.send(data.Item.url);           // successful response
+		});
+
 	}
 }
-

@@ -1,18 +1,24 @@
 const { prefix } = require('../config.json');
 
+const dynamo = require('../dynamo.js')
+
+const quickImages = require('../dynamoQuickImages.js');
 
 //list all commands in a guild
-function generalHelp(msg,commands,guild) {
+async function generalHelp(msg,commands,guild) {
 	data = []
+
+	let images = await quickImages.getImages();
+	images = images.map(img => img.name);	
 
 	//if the command was sent directly to the bot, list all commands
 	if (guild == 'DM') {
 		data.push('Here\'s a list of all my commands:');
-		data.push(commands.map(command => command.name).join(', '));
+		data.push(commands.map(command => command.name).concat(images).sort().join(', '));
 	//otherwise, restrict the list to the commands in the guild help was asked in
 	} else {
 		data.push(`Here\'s a list of all my commands in the server **${guild}**:`);
-		data.push(commandsInGuild(commands,guild));
+		data.push(commandsInGuild(commands,guild,images));
 
 	}
 
@@ -30,13 +36,18 @@ function generalHelp(msg,commands,guild) {
 		});		
 }
 
-function commandHelp(msg,command,botGuildsList) {
+async function commandHelp(msg,command,botGuildsList) {
 	data = []
 
 	data.push(`**Command:**\n\t${command.name}`);
 
 	if (command.aliases) data.push(`**Aliases:**\n\t${command.aliases.join('\n\t')}`);
 	if (command.description) data.push(`**Description:**\n\t${command.description}`);
+	if (command.name == 'addquickimg') {
+		let images = await quickImages.getImages();
+		images = images.map(img => img.name);
+		data.push(`**Description:**\n\tSends the quick image stored in the quick images database. Here is the list of currently recognized quick images: \n\t\`${images.join(', ')}\``)
+	}
 	if (command.guilds) data.push(`**Servers Recognized In:**\n\t${command.guilds.join('\n\t')}`);
 	if (!command.guilds) data.push(`**Servers Recognized In:**\n\t${botGuildsList.join('\n\t')}`);
 	if (command.usage) data.push(`**Usage:**\n\t\`${prefix}${command.name} ${command.usage}\``);
@@ -45,13 +56,14 @@ function commandHelp(msg,command,botGuildsList) {
 	msg.channel.send(data, { split: true });		
 }
 
-function commandsInGuild(commands, guild) {
+function commandsInGuild(commands, guild, images) {
 	return commands
 		.filter(command => command.guilds)
 		.filter(command => command.guilds.includes(guild))
 		.concat(commands.filter(command => !command.guilds))
 		.filter(command => command.name !== 'quickimg')
 		.map(command => command.name)
+		.concat(images)
 		.sort()
 		.join(', ');
 }
@@ -64,7 +76,7 @@ module.exports = {
 	execute(msg, args,botGuildsList) {
 		const data = [];
 		const { commands } = msg.client;
-		let guild = ''
+		let guild = '';
 
 		//determine what guild help command was sent in
 		if (msg.author.lastMessage.mentions._guild == null) {
@@ -82,15 +94,26 @@ module.exports = {
 		const name = args[0].toLowerCase();
 		const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
-		//if the command doesn't exist or isn't allowed in this guild, send invalid message
+		if (command) {
+			if (guild !== 'DM' && !commandsInGuild(commands,guild,[]).includes(name)) {
+					return msg.reply('that\'s not a valid command in this server!');
+			}
+			return commandHelp(msg, command, botGuildsList);
+		} 
+
 		if (!command) {
-			return msg.reply('that\'s not a valid command!');
-		}
+			dynamo.scan({TableName: 'i-touched-the-bot-quick-images'}, function(err,data) {
+				let commandHelpNeeded = true;
 
-		if (guild !== 'DM' && !commandsInGuild(commands,guild).includes(name)) {
-			return msg.reply('that\'s not a valid command in this server!');
+				if (data.Items.map(item => item.name).includes(name)) {
+					url = data.Items.filter(item => item.name == name).map(item => item.url);
+					commandHelpNeeded = false;
+					return msg.channel.send(`${prefix}${name} sends ${url}`)
+				} else {
+					commandHelpNeeded = false;
+					return msg.reply('that\'s not a valid command!');
+				}
+			})
 		}
-
-		return commandHelp(msg,command,botGuildsList);
 	}
 };
