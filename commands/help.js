@@ -2,7 +2,7 @@ const { prefix } = require('../config.json');
 
 const dynamo = require('../dynamo.js')
 
-const quickImages = require('../dynamoQuickImages.js');
+const quickImages = require('../dynamoquickimages.js');
 
 //list all commands in a guild
 async function generalHelp(msg,commands,guild) {

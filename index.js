@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const config = require('./config.json');
 const Discord = require('discord.js');
-const quickImages = require('./dynamoQuickImages.js');
+const quickImages = require('./dynamoquickimages.js');
 const fs = require('fs');
 
 const client = new Discord.Client();

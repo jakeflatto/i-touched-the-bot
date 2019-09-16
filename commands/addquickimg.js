@@ -2,7 +2,7 @@ const { prefix } = require('../config.json')
 
 const dynamo = require('../dynamo.js')
 
-const quickImages = require('../dynamoQuickImages.js')
+const quickImages = require('../dynamoquickimages.js')
 
 var currentImgList = [];
 
