@@ -45,7 +45,7 @@ async function commandHelp(msg,command,botGuildsList) {
 	if (command.description) data.push(`**Description:**\n\t${command.description}`);
 	if (command.name == 'addquickimg') {
 		let images = await quickImages.getImages();
-		images = images.map(img => img.name);
+		images = images.map(img => img.name).sort();
 		data.push(`**Description:**\n\tSends the quick image stored in the quick images database. Here is the list of currently recognized quick images: \n\t\`${images.join(', ')}\``)
 	}
 	if (command.guilds) data.push(`**Servers Recognized In:**\n\t${command.guilds.join('\n\t')}`);
