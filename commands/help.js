@@ -1,7 +1,5 @@
 const { prefix } = require('../config.json');
 
-const dynamo = require('../dynamo.js')
-
 const quickImages = require('../dynamoquickimages.js');
 
 //list all commands in a guild
@@ -73,7 +71,7 @@ module.exports = {
 	description: 'List all of my commands or info about a specific command.',
 	aliases: ['commands'],
 	usage: '[command name]',
-	execute(msg, args,botGuildsList) {
+	execute: async (msg, args,botGuildsList) => {
 		const data = [];
 		const { commands } = msg.client;
 		let guild = '';
@@ -101,19 +99,12 @@ module.exports = {
 			return commandHelp(msg, command, botGuildsList);
 		} 
 
-		if (!command) {
-			dynamo.scan({TableName: 'i-touched-the-bot-quick-images'}, function(err,data) {
-				let commandHelpNeeded = true;
-
-				if (data.Items.map(item => item.name).includes(name)) {
-					url = data.Items.filter(item => item.name == name).map(item => item.url);
-					commandHelpNeeded = false;
-					return msg.channel.send(`${prefix}${name} sends ${url}`)
-				} else {
-					commandHelpNeeded = false;
-					return msg.reply('that\'s not a valid command!');
-				}
-			})
+		let images = await quickImages.getImages();
+		if (images.map(img => img.name).includes(name)) {
+			url = images.filter(img => img.name == name).map(img => img.url);
+			return msg.channel.send(`${prefix}${name} sends ${url}`)
+		} else {
+			return msg.reply('that\'s not a valid command!');
 		}
 	}
 };
