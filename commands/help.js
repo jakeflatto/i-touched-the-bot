@@ -1,18 +1,21 @@
 const { prefix } = require('../config.json');
 
-const quickImages = require('../dynamoquickimages.js');
+const quickImages = require('../dynamoQuickImages.js');
+const quickMemes = require('../dynamoQuickMemes.js');
 
 //list all commands in a guild
 async function generalHelp(msg,commands,guild) {
 	data = []
 
 	let images = await quickImages.getImages();
-	images = images.map(img => img.name);	
+	let memes = await quickMemes.getMemes();
+	images = images.map(img => img.name);
+	memes = memes.map(meme => meme.name);
 
 	//if the command was sent directly to the bot, list all commands
 	if (guild == 'DM') {
 		data.push('Here\'s a list of all my commands:');
-		data.push(`\`${commands.map(command => command.name).concat(images).sort().join(', ')}\``);
+		data.push(`\`${commands.map(command => command.name).concat(images).concat(memes).sort().join(', ')}\``);
 	//otherwise, restrict the list to the commands in the guild help was asked in
 	} else {
 		data.push(`Here\'s a list of all my commands in the server **${guild}**:`);
