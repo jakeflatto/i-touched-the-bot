@@ -1,6 +1,6 @@
 const { prefix } = require('../config.json');
 
-const quickImages = require('../dynamoQuickImages.js');
+const quickImages = require('../dynamoquickimages.js');
 const quickMemes = require('../dynamoQuickMemes.js');
 
 //list all commands in a guild
