@@ -4,22 +4,18 @@ const quickImages = require('../dynamoQuickImages.js');
 const quickMemes = require('../dynamoQuickMemes.js');
 
 //list all commands in a guild
-async function generalHelp(msg,commands,guild) {
+async function generalHelp(msg,commands,quickCommands,guild) {
 	data = []
 
-	let images = await quickImages.getImages();
-	let memes = await quickMemes.getMemes();
-	images = images.map(img => img.name);
-	memes = memes.map(meme => meme.name);
-
+	
 	//if the command was sent directly to the bot, list all commands
 	if (guild == 'DM') {
 		data.push('Here\'s a list of all my commands:');
-		data.push(`\`${commands.map(command => command.name).concat(images).concat(memes).sort().join(', ')}\``);
+		data.push(`\`${commands.map(command => command.name).concat(quickCommands).sort().join(', ')}\``);
 	//otherwise, restrict the list to the commands in the guild help was asked in
 	} else {
 		data.push(`Here\'s a list of all my commands in the server **${guild}**:`);
-		data.push(commandsInGuild(commands,guild,images));
+		data.push(`\`${commandsInGuild(commands,guild,quickCommands)}\``);
 
 	}
 
@@ -57,14 +53,13 @@ async function commandHelp(msg,command,botGuildsList) {
 	msg.channel.send(data, { split: true });		
 }
 
-function commandsInGuild(commands, guild, images) {
+function commandsInGuild(commands, guild) {
 	return commands
 		.filter(command => command.guilds)
 		.filter(command => command.guilds.includes(guild))
 		.concat(commands.filter(command => !command.guilds))
 		.filter(command => command.name !== 'quickimg')
 		.map(command => command.name)
-		.concat(images)
 		.sort()
 		.join(', ');
 }
@@ -78,6 +73,12 @@ module.exports = {
 		const data = [];
 		const { commands } = msg.client;
 		let guild = '';
+		let images = await quickImages.getImages();
+		let memes = await quickMemes.getMemes();
+		imageNames = images.map(img => img.name);
+		memeNames = memes.map(meme => meme.name);
+		quickCommands = imageNames.concat(memeNames);
+
 
 		//determine what guild help command was sent in
 		if (msg.author.lastMessage.mentions._guild == null) {
@@ -88,26 +89,29 @@ module.exports = {
 
 		//if no command was entered, use general help to list all commands in guild
 		if (!args.length) {
-			return generalHelp(msg,commands,guild);
+			return generalHelp(msg,commands,quickCommands,guild);
 		}
 
-		//otherwise, command is given, so we parse args and find command
 		const name = args[0].toLowerCase();
-		const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
-
-		if (command) {
-			if (guild !== 'DM' && !commandsInGuild(commands,guild,[]).includes(name)) {
-					return msg.reply('that\'s not a valid command in this server!');
-			}
-			return commandHelp(msg, command, botGuildsList);
-		} 
-
-		let images = await quickImages.getImages();
 		if (images.map(img => img.name).includes(name)) {
 			url = images.filter(img => img.name == name).map(img => img.url);
 			return msg.channel.send(`${prefix}${name} sends ${url}`)
-		} else {
-			return msg.reply('that\'s not a valid command!');
+		} else if (memes.map(meme => meme.name).includes(name)) {
+			msg.channel.send(`${prefix}${name} sends:`)
+			return quickMemes.generateMeme(msg,['[TEXT1]','[TEXT2]'],memes.filter(meme => meme.name == name)[0]);
 		}
+
+		//otherwise, command is given, so we parse args and find command
+		const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
+
+		if (command) {
+			if (guild !== 'DM' && !commandsInGuild(commands,guild).includes(name)) {
+					return msg.reply('that\'s not a valid command in this server!');
+			}
+			return commandHelp(msg, command, botGuildsList);
+		} else {
+			return msg.reply('I don\'t recognize that command ¯\\_(ツ)_/¯');	
+		}
+
 	}
 };

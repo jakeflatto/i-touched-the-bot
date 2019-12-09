@@ -7,8 +7,8 @@ module.exports = {
 		const text0After = meme.text0_after || '';
 		const text1Before = meme.text1_before || '';
 		const text1After = meme.text1_after || '';
-		const text0 = `${text0Before}${args[0].split('-').join(' ')}${text0After}`;
-		const text1 = `${text1Before}${args[1].split('-').join(' ')}${text1After}`;
+		const text0 = `${text0Before} ${args[0].split('-').join(' ')} ${text0After}`;
+		const text1 = `${text1Before} ${args[1].split('-').join(' ')} ${text1After}`;
 		imgflip.generateMemeById(msg,meme.id,text0,text1);
 	},
 	getMemes: () => dynamo.scan({TableName: 'i-touched-the-bot-quick-memes'}).promise().then((data) => data.Items),
