@@ -3,12 +3,14 @@ const imgflip = require('./imgflip.js')
 
 module.exports = {
 	generateMeme: (msg,args,meme) => {
+		const arg0 = args[0] || '';
+		const arg1 = args[1] || '';
 		const text0Before = meme.text0_before || '';
 		const text0After = meme.text0_after || '';
 		const text1Before = meme.text1_before || '';
 		const text1After = meme.text1_after || '';
-		const text0 = `${text0Before} ${args[0].split('-').join(' ')} ${text0After}`;
-		const text1 = `${text1Before} ${args[1].split('-').join(' ')} ${text1After}`;
+		const text0 = `${text0Before} ${arg0.split('-').join(' ')} ${text0After}`;
+		const text1 = `${text1Before} ${arg1.split('-').join(' ')} ${text1After}`;
 		imgflip.generateMemeById(msg,meme.id,text0,text1);
 	},
 	getMemes: () => dynamo.scan({TableName: 'i-touched-the-bot-quick-memes'}).promise().then((data) => data.Items),
