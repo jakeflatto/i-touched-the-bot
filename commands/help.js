@@ -60,6 +60,7 @@ function commandsInGuild(commands, guild) {
 		.concat(commands.filter(command => !command.guilds))
 		.filter(command => command.name !== 'quickimg')
 		.map(command => command.name)
+		.concat(quickCommands)
 		.sort()
 		.join(', ');
 }
