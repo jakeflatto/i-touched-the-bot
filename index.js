@@ -66,6 +66,11 @@ client.on('message', async msg => {
 		if (images.map(img => img.name).includes(commandName)) {
 			return msg.channel.send(images.filter(img => img.name == commandName).map(img => img.url)[0])
 		} else if (memes.map(meme => meme.name).includes(commandName)) {
+			if (commandName == 'everywhere') {
+				if (args.length == 1) {
+					args.push(`${args[0]} everywhere`)
+				}
+			}
 			if (args.length == 1) {
 				args.unshift('')
 			}
