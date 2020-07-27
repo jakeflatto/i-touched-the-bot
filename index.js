@@ -2,8 +2,9 @@ require('dotenv').config()
 
 const config = require('./config.json');
 const Discord = require('discord.js');
+const messageLogs = require('./messageLogs.js')
 const quickImages = require('./dynamoquickimages.js');
-const quickMemes = require('./dynamoQuickMemes.js')
+const quickMemes = require('./dynamoQuickMemes.js');
 const fs = require('fs');
 
 const client = new Discord.Client();
@@ -45,6 +46,7 @@ client.on('message', async msg => {
 	//parse command and args
 	let args = msg.content.slice(config.prefix.length).split(/\s+/);
 	const commandName = args.shift().toLowerCase();
+
 	//support for optional arguments
 	let argsMap = {}
 	if (args.some((arg) => arg.startsWith('--'))) {
@@ -54,6 +56,16 @@ client.on('message', async msg => {
 			}			
 		})
 	}
+
+	let msgLog = {}
+	msgLog.id = Number(msg.id)
+	msgLog.timestamp = msg.createdTimestamp
+	msgLog.sentIn = msg.channel.type == 'dm' ? 'DM' : msg.channel.guild.name
+	msgLog.sentBy = msg.author.username
+	msgLog.command = commandName
+	msgLog.args = args
+
+	messageLogs.addLog(msgLog);
 
 	//find command or alias
 	const command = client.commands.get(commandName) 
