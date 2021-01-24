@@ -1,6 +1,5 @@
 const { prefix } = require('../config.json');
 
-const quickImages = require('../dynamoquickimages.js');
 const quickMemes = require('../dynamoQuickMemes.js');
 
 module.exports = {
@@ -16,12 +15,10 @@ module.exports = {
 		meme.id = args.id;
 		meme.name = args.n;
 		meme.url = args.url;
-		let images = await quickImages.getImages();
 		let memes = await quickMemes.getMemes();
-		let quickCommands = images.concat(memes);
-		let quickCommandNames = quickCommands.map(cmd => cmd.name);
-		if (quickCommandNames.includes(meme.name)) {
-			return msg.reply(`Sorry, that name is already taken.\n${prefix}${meme.name} sends: ${quickCommands.filter(cmd => cmd.name == meme.name)[0].url}`);			
+		let memeNames = memes.map(cmd => cmd.name);
+		if (memeNames.includes(meme.name)) {
+			return msg.reply(`Sorry, that name is already taken.\n${prefix}${meme.name} sends: ${memes.filter(cmd => cmd.name == meme.name)[0].url}`);			
 		}
 		if (args.t0b) meme.text0_before = args.t0b;
 		if (args.t0a) meme.text0_after = args.t0a;

@@ -1,7 +1,6 @@
 const { prefix } = require('../config.json')
 
-const quickImages = require('../dynamoquickimages.js')
-const quickMemes = require('../dynamoQuickMemes.js');
+const quickImages = require('../dynamoquickimages.js');
 
 module.exports = {
 	name: 'addquickimg',
@@ -13,11 +12,9 @@ module.exports = {
 		name = args[0];
 		url = args[1];
 		let images = await quickImages.getImages();
-		let memes = await quickMemes.getMemes();
-		let quickCommands = images.concat(memes);
-		let quickCommandNames = quickCommands.map(cmd => cmd.name);
-		if (quickCommandNames.includes(name)) {
-			return msg.reply(`Sorry, that name is already taken.\n${prefix}${name} sends: ${quickCommands.filter(cmd => cmd.name == name)[0].url}`);			
+		let imageNames = images.map(cmd => cmd.name);
+		if (imageNames.includes(name)) {
+			return msg.reply(`Sorry, that name is already taken.\n${prefix}${name} sends: ${images.filter(cmd => cmd.name == name)[0].url}`);			
 		}
 		let add = await quickImages.addImage(name,url);
 			return msg.channel.send(`Quick image added successfully!\n${prefix}${name} now sends ${url}`);

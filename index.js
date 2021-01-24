@@ -89,7 +89,7 @@ client.on('message', async msg => {
 	if (!command) return;
 
 	//if command is found, log it
-	messageLogs.addLog(messageLogs.createLog(msg,commnandName));
+	messageLogs.addLog(messageLogs.createLog(msg,commandName,args));
 
 	//if command specifies allowed guilds, and we are in a guild, check if command is allowed in guild
 	if(command.guilds && !(msg.author.lastMessage.mentions._guild == null)) {
