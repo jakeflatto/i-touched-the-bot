@@ -17,21 +17,20 @@ for (const file of commandFiles) {
 }
 
 
-
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 })
 
 client.on('message', async msg => {
 
-	const botGuildsList = client.guilds.map(guild => guild.name);
-	
 	if (msg.author.bot) return;
+
+	const botGuildsList = client.guilds.map(guild => guild.name);
 
 	//special case for any mentions of "hubert" or "vish"
 	//ignore if it's a bot message
 	if (!msg.author.bot 
-		//ignore if someone used hubert command
+		//prevents duplicate send if someone used hubert command
 		&& !msg.content.startsWith('!hubert') 
 			//proc if someone uses any of the following phrases
 			&& (msg.content.toLowerCase().includes('hubert') 
@@ -40,7 +39,7 @@ client.on('message', async msg => {
 	msg.channel.send('https://cdn.discordapp.com/attachments/446392670668062724/599073906623512598/source.png');
 	}
 
-	//at this point, check for commands only by checking prefix
+	//at this point, check for possible commands only by checking prefix
 	if (!msg.content.startsWith(config.prefix)) return;
 
 	//parse command and args
@@ -57,16 +56,6 @@ client.on('message', async msg => {
 		})
 	}
 
-	let msgLog = {}
-	msgLog.id = Number(msg.id)
-	msgLog.timestamp = msg.createdTimestamp
-	msgLog.sentIn = msg.channel.type == 'dm' ? 'DM' : msg.channel.guild.name
-	msgLog.sentBy = msg.author.username
-	msgLog.command = commandName
-	msgLog.args = args
-
-	messageLogs.addLog(msgLog);
-
 	//find command or alias
 	const command = client.commands.get(commandName) 
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -75,23 +64,32 @@ client.on('message', async msg => {
 	if (!command) {
 		var images = await quickImages.getImages();
 		var memes = await quickMemes.getMemes();
-		if (images.map(img => img.name).includes(commandName)) {
+
+		if (images.map(img => img.name).includes(commandName) && args.length == 0) {
+			messageLogs.addLog(messageLogs.createLog(msg,commandName,args));
 			return msg.channel.send(images.filter(img => img.name == commandName).map(img => img.url)[0])
 		} else if (memes.map(meme => meme.name).includes(commandName)) {
+			//special case for the everywhere meme
 			if (commandName == 'everywhere') {
 				if (args.length == 1) {
 					args.push(`${args[0]} everywhere`)
 				}
 			}
+
+			//special case for memes that can be used with 1 arg or two, e.g. !nut
 			if (args.length == 1) {
 				args.unshift('')
 			}
+			messageLogs.addLog(messageLogs.createLog(msg,commandName));
 			return quickMemes.generateMeme(msg,args,memes.filter(meme => meme.name == commandName)[0]);
 		}
 	}
 
 	//if still no command exists, do nothing
 	if (!command) return;
+
+	//if command is found, log it
+	messageLogs.addLog(messageLogs.createLog(msg,commnandName));
 
 	//if command specifies allowed guilds, and we are in a guild, check if command is allowed in guild
 	if(command.guilds && !(msg.author.lastMessage.mentions._guild == null)) {
