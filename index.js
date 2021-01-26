@@ -23,6 +23,9 @@ client.on('ready', () => {
 
 client.on('message', async msg => {
 
+	console.log(msg.channel.type);
+	console.log(msg.channel.guild.name);
+
 	if (msg.author.bot) return;
 
 	const botGuildsList = client.guilds.map(guild => guild.name);

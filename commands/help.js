@@ -82,10 +82,10 @@ module.exports = {
 
 
 		//determine what guild help command was sent in
-		if (msg.author.lastMessage.mentions._guild == null) {
+		if (msg.channel.type == 'dm') {
 			guild = 'DM'
 		} else {
-			guild = msg.author.lastMessage.mentions._guild.name
+			guild = msg.channel.guild.name
 		}
 
 		//if no command was entered, use general help to list all commands in guild
