@@ -126,14 +126,21 @@ client.on('message', async msg => {
 		return;
 	}
 
-	try {
-		command.execute(msg,args,botGuildsList);
+	/*
+		finally, try the command and if something goes wrong:
+		1) log the error in the console and the log channel
+		2) let the user something went wrong 
+	 */
+	command.execute(msg,args,botGuildsList)
+		.catch((err) => {
+			console.log(err);
 
-	} catch (error) {
-		console.error(error);
-		msg.reply(`There was an error trying to execute the command: "${config.prefix}${commandName}"`)
-	}
-})
+			let errorMessageData = `${msg.author} got the following error when trying to execute this: \`${msg.content}\` \n \`${err.stack}\``;
+			client.channels.get(config.errorLogChannelId).send(errorMessageData);
+
+			msg.reply(`Sorry, there was an error trying to execute the command: \`${config.prefix}${commandName}\``);
+		});
+});
 
 
 client.login(process.env[config.botToken])
