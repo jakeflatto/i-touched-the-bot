@@ -76,6 +76,13 @@ client.on('message', async msg => {
 				}
 			}
 
+			//special case for the always has been meme
+			if (commandName == 'always') {
+				if (args.length == 1) {
+					args.push(`Always has been`)
+				}
+			}
+
 			//special case for memes that can be used with 1 arg or two, e.g. !nut
 			if (args.length == 1) {
 				args.unshift('')
