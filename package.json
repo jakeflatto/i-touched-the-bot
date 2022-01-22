@@ -13,7 +13,7 @@
     "image-extensions": "^1.1.0",
     "is-image": "^3.0.0",
     "is-video": "^1.0.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "open": "^7.0.0",
     "url": "^0.11.0",
     "video-extensions": "^1.1.0"
