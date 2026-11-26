@@ -3,11 +3,20 @@ require('dotenv').config()
 const config = require('./config.json');
 const Discord = require('discord.js');
 const messageLogs = require('./messageLogs.js')
+const { sendSplitMessages } = require('./discordUtils.js');
 const quickImages = require('./dynamoquickimages.js');
 const quickMemes = require('./dynamoQuickMemes.js');
 const fs = require('fs');
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+	intents: [
+		Discord.GatewayIntentBits.Guilds,
+		Discord.GatewayIntentBits.GuildMessages,
+		Discord.GatewayIntentBits.DirectMessages,
+		Discord.GatewayIntentBits.MessageContent
+	],
+	partials: [Discord.Partials.Channel]
+});
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -21,11 +30,11 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.on('message', async msg => {
+client.on('messageCreate', async msg => {
 
 	if (msg.author.bot) return;
 
-	const botGuildsList = client.guilds.map(guild => guild.name);
+	const botGuildsList = client.guilds.cache.map(guild => guild.name);
 
 	//special case for any mentions of "hubert" or "vish"
 	//ignore if it's a bot message
@@ -99,10 +108,8 @@ client.on('message', async msg => {
 	messageLogs.addLog(messageLogs.createLog(msg,commandName,args));
 
 	//if command specifies allowed guilds, and we are in a guild, check if command is allowed in guild
-	if(command.guilds && !(msg.author.lastMessage.mentions._guild == null)) {
-		if (!command.guilds.includes(msg.author.lastMessage.mentions._guild.name)) {
-			return;
-		}
+	if (command.guilds && msg.guild && !command.guilds.includes(msg.guild.name)) {
+		return;
 	}
 
 	//check if arguments are optional
@@ -143,7 +150,7 @@ client.on('message', async msg => {
 			console.log(err);
 
 			let errorMessageData = `${msg.author} got the following error when trying to execute this: \`${msg.content}\` \n \`${err.stack}\``;
-			client.channels.get(config.errorLogChannelId).send(errorMessageData);
+			client.channels.cache.get(config.errorLogChannelId).send(errorMessageData);
 
 			msg.reply(`Sorry, there was an error trying to execute the command: \`${config.prefix}${commandName}\``);
 		});

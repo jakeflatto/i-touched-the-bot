@@ -2,10 +2,11 @@ const { prefix } = require('../config.json');
 
 const quickImages = require('../dynamoquickimages.js');
 const quickMemes = require('../dynamoQuickMemes.js');
+const { sendSplitMessages } = require('../discordUtils.js');
 
 //list all commands in a guild
 async function generalHelp(msg,commands,quickCommands,guild) {
-	data = []
+	const data = []
 
 	
 	//if the command was sent directly to the bot, list all commands
@@ -22,9 +23,9 @@ async function generalHelp(msg,commands,quickCommands,guild) {
 
 	data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
 
-	return msg.author.send(data, { split: true })
+	return sendSplitMessages(msg.author, data.join('\n'))
 		.then(() => {
-			if (msg.channel.type === 'dm') return;
+			if (!msg.guild) return;
 			msg.reply('I\'ve sent you a DM with all my commands!');
 		})
 		.catch(error => {
@@ -34,7 +35,7 @@ async function generalHelp(msg,commands,quickCommands,guild) {
 }
 
 async function commandHelp(msg,command,botGuildsList) {
-	data = []
+	const data = []
 
 	data.push(`**Command:**\n\t${command.name}`);
 
@@ -50,7 +51,7 @@ async function commandHelp(msg,command,botGuildsList) {
 	if (command.usage) data.push(`**Usage:**\n\t\`${prefix}${command.name} ${command.usage}\``);
 	if (command.example) data.push(`**Example:**\n\t\`${prefix}${command.name} ${command.example}\``);
 
-	msg.channel.send(data, { split: true });		
+	return sendSplitMessages(msg.channel, data.join('\n'));
 }
 
 function commandsInGuild(commands, guild) {
@@ -82,10 +83,10 @@ module.exports = {
 
 
 		//determine what guild help command was sent in
-		if (msg.channel.type == 'dm') {
+		if (!msg.guild) {
 			guild = 'DM'
 		} else {
-			guild = msg.channel.guild.name
+			guild = msg.guild.name
 		}
 
 		//if no command was entered, use general help to list all commands in guild

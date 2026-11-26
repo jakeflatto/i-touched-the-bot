@@ -6,7 +6,7 @@ module.exports = {
 
 		msgLog.id = Number(msg.id);
 		msgLog.timestamp = msg.createdTimestamp;
-		msgLog.sentIn = msg.channel.type == 'dm' ? 'DM' : msg.channel.guild.name;
+		msgLog.sentIn = msg.guild ? msg.guild.name : 'DM';
 		msgLog.sentBy = msg.author.username;
 		msgLog.command = name;
 		msgLog.args = args;
