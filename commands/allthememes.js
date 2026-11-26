@@ -1,6 +1,3 @@
-const { prefix } = require('../config.json')
-
-const quickImages = require('../dynamoquickimages.js')
 const quickMemes = require('../dynamoQuickMemes.js');
 const { sendSplitMessages } = require('../discordUtils.js');
 
@@ -8,10 +5,11 @@ module.exports = {
 	name: 'allthememes',
 	execute: async (msg, args) => {
 		let memes = await quickMemes.getMemes();
-		memes = memes.map(meme => `${meme.name} -- <https://imgflip.com/memegenerator/${meme.id}>`).sort();
-		data = []
-		data.push(`Here is the list of currently recognized quick memes:`)
-		data.push(memes.join('\n'))
+		memes = memes.map(meme => meme.name).sort();
+		const data = [
+			'Here is the list of currently recognized quick memes:',
+			`\`${memes.join(', ')}\``
+		];
 		return sendSplitMessages(msg.author, data.join('\n'))
 		.then(() => {
 			if (!msg.guild) return;

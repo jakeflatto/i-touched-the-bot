@@ -5,21 +5,22 @@ const quickMemes = require('../dynamoQuickMemes.js');
 const { sendSplitMessages } = require('../discordUtils.js');
 
 //list all commands in a guild
-async function generalHelp(msg,commands,quickCommands,guild) {
+async function generalHelp(msg,commands,guild) {
 	const data = []
 
 	
 	//if the command was sent directly to the bot, list all commands
 	if (guild == 'DM') {
 		data.push('Here\'s a list of all my commands:');
-		data.push(`\`${commands.map(command => command.name).concat(quickCommands).sort().join(', ')}\``);
+		data.push(`\`${commands.map(command => command.name).sort().join(', ')}\``);
 	//otherwise, restrict the list to the commands in the guild help was asked in
 	} else {
 		data.push(`Here\'s a list of all my commands in the server **${guild}**:`);
-		data.push(`\`${commandsInGuild(commands,guild,quickCommands)}\``);
+		data.push(`\`${commandsInGuild(commands,guild)}\``);
 
 	}
 
+	data.push(`Run \`${prefix}alltheimages\` or \`${prefix}allthememes\` to see the available images or memes.`);
 
 	data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
 
@@ -61,7 +62,6 @@ function commandsInGuild(commands, guild) {
 		.concat(commands.filter(command => !command.guilds))
 		.filter(command => command.name !== 'quickimg')
 		.map(command => command.name)
-		.concat(quickCommands)
 		.sort()
 		.join(', ');
 }
@@ -72,14 +72,8 @@ module.exports = {
 	aliases: ['commands'],
 	usage: '[command name]',
 	execute: async (msg, args,botGuildsList) => {
-		const data = [];
 		const { commands } = msg.client;
 		let guild = '';
-		let images = await quickImages.getImages();
-		let memes = await quickMemes.getMemes();
-		imageNames = images.map(img => img.name);
-		memeNames = memes.map(meme => meme.name);
-		quickCommands = imageNames.concat(memeNames);
 
 
 		//determine what guild help command was sent in
@@ -91,12 +85,14 @@ module.exports = {
 
 		//if no command was entered, use general help to list all commands in guild
 		if (!args.length) {
-			return generalHelp(msg,commands,quickCommands,guild);
+			return generalHelp(msg,commands,guild);
 		}
 
 		const name = args[0].toLowerCase();
+		const images = await quickImages.getImages();
+		const memes = await quickMemes.getMemes();
 		if (images.map(img => img.name).includes(name)) {
-			url = images.filter(img => img.name == name).map(img => img.url);
+			const url = images.filter(img => img.name == name).map(img => img.url);
 			return msg.channel.send(`${prefix}${name} sends ${url}`)
 		} else if (memes.map(meme => meme.name).includes(name)) {
 			msg.channel.send(`${prefix}${name} sends:`)
